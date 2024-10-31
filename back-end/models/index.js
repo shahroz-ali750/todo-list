@@ -1,13 +1,9 @@
-const sequelize = require('../database')
- 
+const sequelize = require("../database");
 
-const db = {}
+const db = {};
 
-db.sequelize = sequelize
+db.sequelize = sequelize;
 
-db.todo  = require('./todo.model')(sequelize)
+db.todos = require("./todo.model")(sequelize);
 
-
-
-
-module.exports = db
+module.exports = db;
