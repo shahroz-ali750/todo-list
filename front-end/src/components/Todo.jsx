@@ -13,25 +13,6 @@ export default function Todo() {
     status: "",
     deadline: "",
   });
-
-  // Fetch tasks from the database
-  // useEffect(() => {
-  //   const fetchTodos = async () => {
-  //     try {
-  //       const result = await axios.get("http://localhost:8000/api/v1/todo");
-  //       console.log(result.data);
-  //       setTodoList(Array.isArray(result.data) ? result.data : []);
-  //       console.log(todoList);
-  //     } catch (err) {
-  //       console.error(err);
-  //       alert("Failed to fetch tasks. Please try again.");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchTodos();
-  // }, []);
-
   useEffect(() => {
     let getTasks = async function () {
       let taskResponse = await fetch(`http://localhost:8000/api/v1/todo`);
@@ -173,7 +154,9 @@ export default function Todo() {
                               type="text"
                               className="form-control"
                               value={editedData.task}
-                              onChange={(e) => handleEditChange('task',e.target.value)}
+                              onChange={(e) =>
+                                handleEditChange("task", e.target.value)
+                              }
                             />
                           ) : (
                             data.task
@@ -185,7 +168,9 @@ export default function Todo() {
                               type="text"
                               className="form-control"
                               value={editedData.status}
-                              onChange={(e) => handleEditChange('status',e.target.value)}
+                              onChange={(e) =>
+                                handleEditChange("status", e.target.value)
+                              }
                             />
                           ) : (
                             data.status
@@ -197,7 +182,9 @@ export default function Todo() {
                               type="datetime-local"
                               className="form-control"
                               value={editedData.deadline}
-                              onChange={(e) => handleEditChange('deadline',e.target.value)}
+                              onChange={(e) =>
+                                handleEditChange("deadline", e.target.value)
+                              }
                             />
                           ) : (
                             formatDate(data.deadline)
@@ -241,7 +228,11 @@ export default function Todo() {
         </div>
         <div className="col-md-5">
           <h2 className="text-center">Add Task</h2>
-          <form className="bg-light p-4" onSubmit={(e)=>{addTask(e)}}>
+          <form
+            className="bg-light p-4"
+            onSubmit={(e) => {
+              addTask(e);
+            }}>
             <div className="mb-3">
               <label>Task</label>
               <input
