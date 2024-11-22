@@ -32,7 +32,7 @@ export default function Todo() {
 
     let getTasks = async function () {
       let taskResponse = await fetch(
-        `http://localhost:8000/api/v1/todo?userId=` + getUserToken.id
+        `http://localhost:8000/api/v1/todo/admin`
       );
       let taskData = await taskResponse.json();
       console.log("task response =>", taskData);
@@ -60,6 +60,7 @@ export default function Todo() {
         status: newStatus,
         deadline: new Date(newDeadline).toISOString(),
         userId: getStorage(process.env.REACT_APP_LOCAL_KEY + "usertoken").id,
+        // userName: getStorage(process.env.REACT_APP_LOCAL_KEY + "usertoken").userName
       });
       setTodoList((prevList) => [...prevList, res.data]);
       resetFormFields();
@@ -133,7 +134,7 @@ export default function Todo() {
     <div className="container mt-5">
       <div className="row">
         <button onClick={logout}>Log Out</button>
-        <div className="col-md-7">
+        <div className="col-md-12">
           <h2 className="text-center">Todo List</h2>
           <div className="table-responsive">
             <table className="table table-bordered">
@@ -143,6 +144,7 @@ export default function Todo() {
                   <th>Status</th>
                   <th>Deadline</th>
                   <th>Actions</th>
+                  <th>User Name</th>
                 </tr>
               </thead>
               {loading ? (
@@ -237,7 +239,11 @@ export default function Todo() {
                                 Delete
                               </button>
                             </>
+                            
                           )}
+                        </td>
+                        <td>
+                            {data.userId}
                         </td>
                       </tr>
                     ))}
@@ -246,7 +252,7 @@ export default function Todo() {
             </table>
           </div>
         </div>
-        <div className="col-md-5">
+        {/* <div className="col-md-5">
           <h2 className="text-center">Add Task</h2>
           <form
             className="bg-light p-4"
@@ -284,7 +290,7 @@ export default function Todo() {
               Add Task
             </button>
           </form>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -2,6 +2,10 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Todo from "./components/Todo";
+import Register from "./components/Register";
+import Login from "./components/Login";
+import Nav from "./components/Nav";
+import AdminViews from "./components/AdminViews";
 
 function App() {
   const headStyle = {
@@ -9,10 +13,14 @@ function App() {
   };
   return (
     <div>
-      <h1 style={headStyle}>Todo List</h1>
+      {/* <h1 style={headStyle}>Todo List</h1> */}
       <BrowserRouter>
+      <Nav/>
         <Routes>
-          <Route path="/" element={<Todo />}></Route>
+          <Route path="/" index element={<Todo />}></Route>
+          <Route path="/register" element={<Register/>}></Route>
+          <Route path="/login" element={<Login/>}></Route>
+          <Route path="/admin" element={<AdminViews/>}></Route>
         </Routes>
       </BrowserRouter>
     </div>

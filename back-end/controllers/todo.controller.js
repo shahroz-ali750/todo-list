@@ -1,11 +1,24 @@
-const { where } = require("sequelize");
 const db = require("../models");
 
 const todo = db.todos;
 
+const adminfunc = async(req,res)=>{
+  try {
+    let userId = req.query.userId;
+    console.log(userId);
+    let allTasks = await todo.findAll();
+    res.status(200).json({ allTasks });
+  } catch (error) {
+    res.status(400).json({ err: error.message });
+  }
+}
 const getTasks = async (req, res) => {
   try {
-    let allTasks = await todo.findAll();
+    let userId = req.query.userId;
+    console.log(userId);
+    let allTasks = await todo.findAll({
+      where: { userId },
+    });
     res.status(200).json({ allTasks });
   } catch (error) {
     res.status(400).json({ err: error.message });
@@ -23,8 +36,8 @@ const getSingleTask = async (req, res) => {
 };
 const postTask = async (req, res) => {
   try {
-    let { task, status, deadline } = req.body;
-    let todos = await todo.create({ task, status, deadline });
+    let { task, status, deadline, userId } = req.body;
+    let todos = await todo.create({ task, status, deadline, userId });
     res.status(200).json(todos);
   } catch (error) {
     res.status(400).json({ err: error.message });
@@ -53,4 +66,4 @@ const deleteTask = async (req, res) => {
   // res.status(200).json("delete todo is called");
 };
 
-module.exports = { getTasks, getSingleTask, postTask, patchTask, deleteTask };
+module.exports = { getTasks, getSingleTask, postTask, patchTask, deleteTask , adminfunc };
