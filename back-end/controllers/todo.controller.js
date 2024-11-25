@@ -1,21 +1,27 @@
 const db = require("../models");
 
 const todo = db.todos;
+const user = db.users;
 
-const adminfunc = async(req,res)=>{
+const adminfunc = async (req, res) => {
   try {
-    let userId = req.query.userId;
-    console.log(userId);
-    let allTasks = await todo.findAll();
+    let allTasks = await todo.findAll({
+      include: [
+        {
+          model: user,
+          attributes: ["userName", "role"],
+        },
+      ],
+    });
     res.status(200).json({ allTasks });
+    console.log(allTasks);
   } catch (error) {
     res.status(400).json({ err: error.message });
   }
-}
+};
 const getTasks = async (req, res) => {
   try {
     let userId = req.query.userId;
-    console.log(userId);
     let allTasks = await todo.findAll({
       where: { userId },
     });
@@ -66,4 +72,11 @@ const deleteTask = async (req, res) => {
   // res.status(200).json("delete todo is called");
 };
 
-module.exports = { getTasks, getSingleTask, postTask, patchTask, deleteTask , adminfunc };
+module.exports = {
+  getTasks,
+  getSingleTask,
+  postTask,
+  patchTask,
+  deleteTask,
+  adminfunc,
+};

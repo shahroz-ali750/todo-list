@@ -5,7 +5,7 @@ const db = require("../models");
 const User = db.users;
 
 let createToken = function (id) {
-  return jwt.sign({ id }, "kdfjlfdljdflgjflgjdfilgjdflkgjdflgkjdf", {
+  return jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
     expiresIn: "1h",
   });
 };
@@ -30,15 +30,9 @@ const signIn = async (req, res) => {
     //   res.status(200).json({'user signed in  =>':user})
     // }
     let token = createToken(user.id);
-    return res.status(201).json({
-      msg: "success",
-      data: {
-        id:user.id,
-        // email: user.email,
-        // userName: user.userName,
-        token
-      },
-    });
+    return res
+      .status(201)
+      .json({ msg: "success", data: { id: user.id, token , role: user.role  } });
   } catch (error) {
     res.status(500).json({ error: error.message, msg: "msg" });
   }

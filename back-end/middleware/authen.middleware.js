@@ -1,35 +1,23 @@
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 
-module.exports = (req,res,next)=>{
+module.exports = (req, res, next) => {
+  if (!(req.headers.authorization || req.headers.Authorization)) {
+    return res.status(401).json("please provide token to proceed");
+  }
 
-    if(!(req.headers.authorization || req.headers.Authorization)){
+  let tokenString = req.headers.authorization || req.headers.Authorization;
 
-        return res.status(401).json("please provide token to proceed")
+  let token = tokenString.split(" ")[1];
 
+  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decode) => {
+    if (err) {
+      return res.status(401).json(err.message);
     }
 
-    let tokenString = req.headers.authorization || req.headers.Authorization
+    // res.status(200).json(decode)
 
-    let token = tokenString.split(' ')[1]
+    req.userId = decode.id;
 
-    jwt.verify(token,'kdfjlfdljdflgjflgjdfilgjdflkgjdflgkjdf',(err,decode)=>{
-
-        if(err){
-            
-            return res.status(401).json(err.message)
-        }
-
-        // res.status(200).json(decode)
-
-        req.userID = decode.id
-
-        next()
-
-
-    })
-
-
-
-
-
-}
+    next();
+  });
+};

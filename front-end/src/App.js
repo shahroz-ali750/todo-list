@@ -6,6 +6,7 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import Nav from "./components/Nav";
 import AdminViews from "./components/AdminViews";
+import UnauthorizedUser from "./components/UnauthorizedUser";
 
 function App() {
   const headStyle = {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/register" element={<Register/>}></Route>
           <Route path="/login" element={<Login/>}></Route>
           <Route path="/admin" element={<AdminViews/>}></Route>
+          <Route path="/unauthorize" element={<UnauthorizedUser/>}></Route>
         </Routes>
       </BrowserRouter>
     </div>

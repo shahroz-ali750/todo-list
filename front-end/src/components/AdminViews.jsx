@@ -27,13 +27,25 @@ export default function Todo() {
     );
     if (!getUserToken) {
       navigate("/login");
-      return;
+      return; 
     }
+    const adminRoute = ()=>{
+      const role = getUserToken.role
+      if(role !== "admin"){
+        navigate('/unauthorize')
+      }
+      
+    }
+    adminRoute()
 
     let getTasks = async function () {
-      let taskResponse = await fetch(
-        `http://localhost:8000/api/v1/todo/admin`
-      );
+      let taskResponse = await fetch(`http://localhost:8000/api/v1/todo/admin`,{
+        method:"GET",
+        headers:{
+          "Content-Type": "application/json",
+          authorization:`Bearer ${getUserToken.token}`
+        }
+      });
       let taskData = await taskResponse.json();
       console.log("task response =>", taskData);
       setTodoList(taskData.allTasks);
@@ -42,33 +54,7 @@ export default function Todo() {
     getTasks();
   }, []);
 
-  const resetFormFields = () => {
-    setNewTask("");
-    setNewStatus("");
-    setNewDeadline("");
-  };
 
-  const addTask = async (e) => {
-    e.preventDefault();
-    if (!newTask || !newStatus || !newDeadline) {
-      alert("All fields are required.");
-      return;
-    }
-    try {
-      const res = await axios.post("http://localhost:8000/api/v1/todo", {
-        task: newTask,
-        status: newStatus,
-        deadline: new Date(newDeadline).toISOString(),
-        userId: getStorage(process.env.REACT_APP_LOCAL_KEY + "usertoken").id,
-        // userName: getStorage(process.env.REACT_APP_LOCAL_KEY + "usertoken").userName
-      });
-      setTodoList((prevList) => [...prevList, res.data]);
-      resetFormFields();
-    } catch (error) {
-      console.error("Error adding task:", error);
-      alert("Failed to add task. Please try again.");
-    }
-  };
 
   const toggleEditable = (id) => {
     console.log("id =>", id);
@@ -143,7 +129,6 @@ export default function Todo() {
                   <th>Task</th>
                   <th>Status</th>
                   <th>Deadline</th>
-                  <th>Actions</th>
                   <th>User Name</th>
                 </tr>
               </thead>
@@ -212,39 +197,7 @@ export default function Todo() {
                             formatDate(data.deadline)
                           )}
                         </td>
-                        <td>
-                          {editableId === data.id ? (
-                            <>
-                              <button
-                                className="btn btn-success btn-sm"
-                                onClick={() => saveEditedTask(data.id)}>
-                                Save
-                              </button>
-                              <button
-                                className="btn btn-secondary btn-sm ms-1"
-                                onClick={() => setEditableId(null)}>
-                                Cancel
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button
-                                className="btn btn-primary btn-sm"
-                                onClick={() => toggleEditable(data.id)}>
-                                Edit
-                              </button>
-                              <button
-                                className="btn btn-danger btn-sm ms-1"
-                                onClick={() => deleteTask(data.id)}>
-                                Delete
-                              </button>
-                            </>
-                            
-                          )}
-                        </td>
-                        <td>
-                            {data.userId}
-                        </td>
+                        <td>{data.User?.userName || "Unknown User"}</td>
                       </tr>
                     ))}
                 </tbody>
@@ -252,45 +205,6 @@ export default function Todo() {
             </table>
           </div>
         </div>
-        {/* <div className="col-md-5">
-          <h2 className="text-center">Add Task</h2>
-          <form
-            className="bg-light p-4"
-            onSubmit={(e) => {
-              addTask(e);
-            }}>
-            <div className="mb-3">
-              <label>Task</label>
-              <input
-                className="form-control"
-                type="text"
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <label>Status</label>
-              <input
-                className="form-control"
-                type="text"
-                value={newStatus}
-                onChange={(e) => setNewStatus(e.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <label>Deadline</label>
-              <input
-                className="form-control"
-                type="datetime-local"
-                value={newDeadline}
-                onChange={(e) => setNewDeadline(e.target.value)}
-              />
-            </div>
-            <button className="btn btn-success btn-sm" type="submit">
-              Add Task
-            </button>
-          </form>
-        </div> */}
       </div>
     </div>
   );

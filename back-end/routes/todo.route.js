@@ -7,11 +7,12 @@ const {
   deleteTask,
   adminfunc,
 } = require("../controllers/todo.controller");
+const checkRoleMiddleware = require("../middleware/checkRole.middleware");
 
 const router = express.Router();
 
 router.get("/", getTasks);
-router.get("/admin", adminfunc);
+router.get("/admin",checkRoleMiddleware , adminfunc);
 router.get("/:id", getSingleTask);
 router.post("/", postTask);
 router.patch("/:id", patchTask);

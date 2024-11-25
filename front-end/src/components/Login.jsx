@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { setStorage } from "../util/storage";
+import { getStorage, setStorage } from "../util/storage";
 import { Link } from "react-router-dom";
 
 export default function Login() {
   const [userData, setUserData] = useState({});
+  let myToken = getStorage(process.env.REACT_APP_LOCAL_KEY + "usertoken")
 
   let navigate = useNavigate();
 
@@ -12,13 +13,16 @@ export default function Login() {
     e.preventDefault();
     fetch(`${process.env.REACT_APP_BASE_URL}/user/signIn`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json",
+              authorization:`Bearer ${myToken}`
+
+       },
       body: JSON.stringify(userData),
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log(res);
         setStorage(process.env.REACT_APP_LOCAL_KEY + "usertoken", res.data);
+        console.log(res.data)
         // localStorage.setItem("usertoken", JSON.stringify(res.data));
         // alert("user login successfully");
         navigate("/");

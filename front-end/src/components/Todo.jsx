@@ -29,13 +29,20 @@ export default function Todo() {
       navigate("/login");
       return;
     }
-
+    console.log("user token =>", getUserToken);
     let getTasks = async function () {
       let taskResponse = await fetch(
-        `http://localhost:8000/api/v1/todo?userId=` + getUserToken.id
+        `http://localhost:8000/api/v1/todo?userId=` + getUserToken.id,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getUserToken.token}`,
+          },
+        }
       );
       let taskData = await taskResponse.json();
-      console.log("task response =>", taskData);
+      console.log("task response from backend =>", taskData);
       setTodoList(taskData.allTasks);
       setLoading(false);
     };
@@ -55,12 +62,24 @@ export default function Todo() {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:8000/api/v1/todo", {
-        task: newTask,
-        status: newStatus,
-        deadline: new Date(newDeadline).toISOString(),
-        userId: getStorage(process.env.REACT_APP_LOCAL_KEY + "usertoken").id,
-      });
+      const getUserToken = getStorage(
+        process.env.REACT_APP_LOCAL_KEY + "usertoken"
+      );
+      const res = await axios.post(
+        "http://localhost:8000/api/v1/todo",
+        {
+          task: newTask,
+          status: newStatus,
+          deadline: new Date(newDeadline).toISOString(),
+          userId: getStorage(process.env.REACT_APP_LOCAL_KEY + "usertoken").id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getUserToken.token}`,
+          },
+        }
+      );
       setTodoList((prevList) => [...prevList, res.data]);
       resetFormFields();
     } catch (error) {
@@ -94,10 +113,22 @@ export default function Todo() {
       return;
     }
     try {
-      const res = await axios.patch(`http://localhost:8000/api/v1/todo/${id}`, {
-        ...editedData,
-        deadline: new Date(editedData.deadline).toISOString(),
-      });
+      const getUserToken = getStorage(
+        process.env.REACT_APP_LOCAL_KEY + "usertoken"
+      );
+      const res = await axios.patch(
+        `http://localhost:8000/api/v1/todo/${id}`,
+        {
+          ...editedData,
+          deadline: new Date(editedData.deadline).toISOString(),
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getUserToken.token}`,
+          },
+        }
+      );
       setTodoList((prevList) =>
         prevList.map((task) => (task.id === id ? res.data : task))
       );
@@ -110,7 +141,15 @@ export default function Todo() {
 
   const deleteTask = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/v1/todo/${id}`);
+      const getUserToken = getStorage(
+        process.env.REACT_APP_LOCAL_KEY + "usertoken"
+      );
+      await axios.delete(`http://localhost:8000/api/v1/todo/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getUserToken.token}`,
+        },
+      });
       setTodoList((prevList) => prevList.filter((task) => task.id !== id));
     } catch (error) {
       console.error("Error deleting task:", error);
