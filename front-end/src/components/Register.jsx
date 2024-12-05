@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Register() {
   const [userData, setUserData] = useState({});
@@ -10,7 +10,7 @@ export default function Register() {
     if (token && JSON.parse(token)) {
       navigate("/");
     }
-  }, []);
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,15 +18,10 @@ export default function Register() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
-      // userName: userData.userName,
-      // email: userData.email,
-      // password: userData.password,
     })
       .then((response) => response.json())
       .then((res) => {
-        console.log(res);
         alert("user has been registered");
-        // localStorage.setItem("todo-usertoken", JSON.stringify(res.data));
         navigate("/login");
       })
       .catch((err) => {
@@ -76,6 +71,8 @@ export default function Register() {
                   value={"Register"}
                 />
               </form>
+              <h6 className="text-white">Already have an account?</h6>
+              <Link to="/login">Log in</Link>
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 export default function Login() {
   const [userData, setUserData] = useState({});
-  let myToken = getStorage(process.env.REACT_APP_LOCAL_KEY + "usertoken")
+  let myToken = getStorage(process.env.REACT_APP_LOCAL_KEY + "usertoken");
 
   let navigate = useNavigate();
 
@@ -13,16 +13,15 @@ export default function Login() {
     e.preventDefault();
     fetch(`${process.env.REACT_APP_BASE_URL}/user/signIn`, {
       method: "POST",
-      headers: { "Content-Type": "application/json",
-              authorization:`Bearer ${myToken}`
-
-       },
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${myToken}`,
+      },
       body: JSON.stringify(userData),
     })
       .then((res) => res.json())
       .then((res) => {
         setStorage(process.env.REACT_APP_LOCAL_KEY + "usertoken", res.data);
-        console.log(res.data)
         // localStorage.setItem("usertoken", JSON.stringify(res.data));
         // alert("user login successfully");
         navigate("/");
@@ -37,7 +36,7 @@ export default function Login() {
       <div className="row justify-content-center my-md-5">
         <div className="col-12 col-md-8 justify-content-center">
           <div className="card bg-dark p-5">
-            <h1 className="text-white text-center">Login Form</h1>
+            <h1 className="text-white text-center">Log in Form</h1>
             <form
               onSubmit={(e) => {
                 handlelogin(e);
@@ -59,9 +58,10 @@ export default function Login() {
                   setUserData({ ...userData, password: e.target.value });
                 }}
               />
-              <button className="btn btn-success w-100">Login</button>
+              <button className="btn btn-success w-100">Log in</button>
             </form>
-            <Link to ="/register"></Link>
+            <h6 className="text-white">Don't have an account?</h6>{" "}
+            <Link to="/register">Sign Up</Link>
           </div>
         </div>
       </div>

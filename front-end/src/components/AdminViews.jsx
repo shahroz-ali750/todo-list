@@ -7,19 +7,12 @@ export default function Todo() {
   const [todoList, setTodoList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editableId, setEditableId] = useState(null);
-  const [newTask, setNewTask] = useState("");
-  const [newStatus, setNewStatus] = useState("");
-  const [newDeadline, setNewDeadline] = useState("");
   const [editedData, setEditedData] = useState({
     task: "",
     status: "",
     deadline: "",
   });
-  let navigate = useNavigate();
-  const logout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
+  let navigate = useNavigate()
 
   useEffect(() => {
     const getUserToken = getStorage(
@@ -27,34 +20,33 @@ export default function Todo() {
     );
     if (!getUserToken) {
       navigate("/login");
-      return; 
+      return;
     }
-    const adminRoute = ()=>{
-      const role = getUserToken.role
-      if(role !== "admin"){
-        navigate('/unauthorize')
+    const adminRoute = () => {
+      const role = getUserToken.role;
+      if (role !== "admin") {
+        navigate("/unauthorize");
       }
-      
-    }
-    adminRoute()
+    };
+    adminRoute();
 
     let getTasks = async function () {
-      let taskResponse = await fetch(`http://localhost:8000/api/v1/todo/admin`,{
-        method:"GET",
-        headers:{
-          "Content-Type": "application/json",
-          authorization:`Bearer ${getUserToken.token}`
+      let taskResponse = await fetch(
+        `http://localhost:8000/api/v1/todo/admin`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${getUserToken.token}`,
+          },
         }
-      });
+      );
       let taskData = await taskResponse.json();
-      console.log("task response =>", taskData);
       setTodoList(taskData.allTasks);
       setLoading(false);
     };
     getTasks();
-  }, []);
-
-
+  }, [navigate]);
 
   const toggleEditable = (id) => {
     console.log("id =>", id);
@@ -119,7 +111,6 @@ export default function Todo() {
   return (
     <div className="container mt-5">
       <div className="row">
-        <button onClick={logout}>Log Out</button>
         <div className="col-md-12">
           <h2 className="text-center">Todo List</h2>
           <div className="table-responsive">

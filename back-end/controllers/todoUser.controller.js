@@ -6,7 +6,7 @@ const User = db.users;
 
 let createToken = function (id) {
   return jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: "1h",
+    expiresIn: "10m",
   });
 };
 const signIn = async (req, res) => {
@@ -16,7 +16,6 @@ const signIn = async (req, res) => {
       res.status(400).json({ err: "all field must be filled" });
     }
     let user = await User.findOne({ where: { email } });
-    console.log("user email =>", user);
     if (!user) {
       return res
         .status(400)
@@ -30,9 +29,10 @@ const signIn = async (req, res) => {
     //   res.status(200).json({'user signed in  =>':user})
     // }
     let token = createToken(user.id);
-    return res
-      .status(201)
-      .json({ msg: "success", data: { id: user.id, token , role: user.role  } });
+    return res.status(201).json({
+      msg: "success",
+      data: { id: user.id, userName: user.userName, token, role: user.role },
+    });
   } catch (error) {
     res.status(500).json({ error: error.message, msg: "msg" });
   }
@@ -55,7 +55,6 @@ const register = async (req, res) => {
     }
     let salt = await bcrypt.genSalt(10);
     let encryptedPassword = await bcrypt.hash(password, salt);
-    //  console.log("encrypted =>", encryptedPassword)
 
     const user = await User.create({
       email,

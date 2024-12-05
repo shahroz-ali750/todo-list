@@ -16,11 +16,6 @@ export default function Todo() {
     deadline: "",
   });
   let navigate = useNavigate();
-  const logout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
-
   useEffect(() => {
     const getUserToken = getStorage(
       process.env.REACT_APP_LOCAL_KEY + "usertoken"
@@ -29,7 +24,6 @@ export default function Todo() {
       navigate("/login");
       return;
     }
-    console.log("user token =>", getUserToken);
     let getTasks = async function () {
       let taskResponse = await fetch(
         `http://localhost:8000/api/v1/todo?userId=` + getUserToken.id,
@@ -42,12 +36,11 @@ export default function Todo() {
         }
       );
       let taskData = await taskResponse.json();
-      console.log("task response from backend =>", taskData);
       setTodoList(taskData.allTasks);
       setLoading(false);
     };
     getTasks();
-  }, []);
+  }, [navigate]);
 
   const resetFormFields = () => {
     setNewTask("");
@@ -171,7 +164,6 @@ export default function Todo() {
   return (
     <div className="container mt-5">
       <div className="row">
-        <button onClick={logout}>Log Out</button>
         <div className="col-md-7">
           <h2 className="text-center">Todo List</h2>
           <div className="table-responsive">
